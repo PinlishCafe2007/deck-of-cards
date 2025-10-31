@@ -5,6 +5,7 @@
   let drawnCards = [];
   let isLoading = false;
   let error = null;
+  let showDeckIdTooltip = false;
 
   // Создание новой колоды
   async function createNewDeck() {
@@ -98,8 +99,19 @@
         <div class="controls">
             <div class="status">
                 {#if deckId}
-                    <p>Колода: <strong>{deckId.slice(0, 8)}...</strong></p>
+                    <p>Колода: 
+                      <strong 
+                        class="deck-id" 
+                        on:mouseenter={() => showDeckIdTooltip = true}
+                        on:mouseleave={() => showDeckIdTooltip = false}
+                      >
+                        {deckId.slice(0, 8)}...</strong></p>
                     <p>Осталось карт: <strong>{remainingCards}</strong></p>
+                {/if}
+                {#if showDeckIdTooltip}
+                  <div class="tooltip">
+                    ID: {deckId}
+                  </div>
                 {/if}
             </div>
             <div class="buttons">
@@ -390,5 +402,20 @@
     h1 {
       font-size: 2em;
     }
+  }
+  .deck-id {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #3498db;
+  }
+
+  .tooltip {
+    position: absolute;
+    background: black;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-left: 10px;
+    top: 18%;
   }
 </style>
