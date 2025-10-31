@@ -1,0 +1,394 @@
+<script>
+  let deckId = null;
+  let remainingCards = 0;
+  let currentCard = null;
+  let drawnCards = [];
+  let isLoading = false;
+  let error = null;
+
+  // Создание новой колоды
+  async function createNewDeck() {
+    isLoading = true;
+    error = null;
+    try {
+      const response = await fetch('https://deckofcardsapi.com/api/deck/new/');
+      const data = await response.json();
+      
+      if (data.success) {
+        deckId = data.deck_id;
+        remainingCards = data.remaining;
+        drawnCards = [];
+        currentCard = null;
+      } else {
+        error = 'Не удалось создать колоду';
+      }
+    } catch (err) {
+      error = 'Ошибка сети: ' + err.message;
+    }
+    isLoading = false;
+  }
+
+  // Вытягивание карты
+  async function drawCard() {
+    if (!deckId || remainingCards === 0) return;
+    
+    isLoading = true;
+    error = null;
+    try {
+      const response = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
+      const data = await response.json();
+      
+      if (data.success && data.cards.length > 0) {
+        currentCard = data.cards[0];
+        remainingCards = data.remaining;
+        drawnCards = [currentCard, ...drawnCards];
+      } else {
+        error = 'Не удалось вытянуть карту';
+      }
+    } catch (err) {
+      error = 'Ошибка сети: ' + err.message;
+    }
+    isLoading = false;
+  }
+
+  // Перетасовка колоды
+  async function shuffleDeck() {
+    if (!deckId) return;
+    
+    isLoading = true;
+    error = null;
+    try {
+      const response = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/shuffle/`);
+      const data = await response.json();
+      
+      if (data.success) {
+        remainingCards = data.remaining;
+        drawnCards = [];
+        currentCard = null;
+      } else {
+        error = 'Не удалось перетасовать колоду';
+      }
+    } catch (err) {
+      error = 'Ошибка сети: ' + err.message;
+    }
+    isLoading = false;
+  }
+
+  // Сброс колоды (новая колода)
+  function resetDeck() {
+    deckId = null;
+    remainingCards = 0;
+    currentCard = null;
+    drawnCards = [];
+    error = null;
+  }
+
+  // Создаем колоду при загрузке приложения
+  createNewDeck();
+</script>
+
+<svelte:head>
+    <title>Deck Of Cards</title>
+</svelte:head>
+
+<main>
+    <h1>🃏Колода карт</h1>
+    <div class="container">
+        <!-- Статус и управление -->
+        <div class="controls">
+            <div class="status">
+                {#if deckId}
+                    <p>Колода: <strong>{deckId.slice(0, 8)}...</strong></p>
+                    <p>Осталось карт: <strong>{remainingCards}</strong></p>
+                {/if}
+            </div>
+            <div class="buttons">
+                <button on:click={createNewDeck} disabled={isLoading}>
+                {isLoading ? 'Загрузка...' : 'Создать колоду'}
+                </button>
+                <button on:click={drawCard} disabled={isLoading || !deckId || remainingCards === 0}>
+                {isLoading ? 'Загрузка...' : 'Вытянуть карту'}
+                </button>
+                <button on:click={shuffleDeck} disabled={isLoading || !deckId}>
+                {isLoading ? 'Загрузка...' : 'Перетасовать'}
+                </button>
+                <button on:click={resetDeck} class = 'secondary'>
+                Сброс
+                </button>
+            </div>
+        </div>
+        <!-- Сообщение об ошибках -->
+        {#if error}
+            <div class="error">
+                ⚠️ {error}
+            </div>
+        {/if}
+        <!-- Текущая карта -->
+        {#if currentCard}
+            <div class="current-card">
+                <h2>Текущая карта: </h2>
+                <div class="card-display">
+                    <img 
+                    src={currentCard.image} 
+                    alt='{currentCard.value} or {currentCard.suit}' 
+                    class="card-image"
+                    >
+                </div>
+                <div class="card-info">
+                    <p><strong>{currentCard.value} of {currentCard.suit}</strong></p>
+                    <p class="card-code">Код: {currentCard.code}</p>
+                </div>
+            </div>
+        {/if}
+        <!-- История вытянутых карт -->
+            {#if drawnCards.length > 0}
+                <div class="history">
+                    <h2>История карт ({drawnCards.length})</h2>
+                    <div class="cards-grid">
+                        {#each drawnCards as card, index}
+                            <div class="history-card">
+                                <img 
+                                src={card.image} 
+                                alt="{card.value} or {card.suit}" 
+                                class="card-image small"
+                                title="{card.value} or {card.suit}"
+                                >
+                            </div>
+                        {/each}
+                    </div>
+                </div>
+            {:else if deckId && !isLoading}
+            <div class="empty-state">
+                <p>🎲Нажмите "Вытянуть карту", чтобы начать!</p>
+            </div>
+            {/if}
+        <!-- Состояние загрузки -->
+        {#if isLoading && !currentCard}
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Загрузка...</p>
+            </div>
+        {/if}
+    </div>
+</main>
+
+<style>
+  :global(body) {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #00fff7 0%, #00ff55 100%);
+    min-height: 100vh;
+    color: #333;
+  }
+
+  main {
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+  }
+
+  .status {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .status p {
+    margin: 5px 0;
+    font-size: 1.1em;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #3498db;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+  }
+
+  button:hover:not(:disabled) {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  button:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  button.secondary {
+    background: #e74c3c;
+  }
+
+  button.secondary:hover:not(:disabled) {
+    background: #c0392b;
+  }
+
+  .error {
+    background: #e74c3c;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .current-card {
+    text-align: center;
+    margin: 30px 0;
+    padding: 20px;
+    background: #ecf0f1;
+    border-radius: 10px;
+  }
+
+  .card-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+
+  .card-image {
+    width: 200px;
+    height: 280px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+  }
+
+  .card-image:hover {
+    transform: scale(1.05);
+  }
+
+  .card-image.small {
+    width: 80px;
+    height: 112px;
+    border-radius: 4px;
+  }
+
+  .card-info {
+    text-align: left;
+  }
+
+  .card-info p {
+    margin: 10px 0;
+    font-size: 1.2em;
+  }
+
+  .card-code {
+    color: #7f8c8d;
+    font-size: 1em !important;
+  }
+
+  .history {
+    margin-top: 40px;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .history-card {
+    text-align: center;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #7f8c8d;
+    font-size: 1.2em;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 40px;
+  }
+
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 15px;
+      margin: 10px;
+    }
+
+    .controls {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .buttons {
+      justify-content: center;
+    }
+
+    .card-display {
+      flex-direction: column;
+    }
+
+    .card-info {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2em;
+    }
+  }
+</style>
