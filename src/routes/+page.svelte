@@ -142,7 +142,7 @@
                 <div class="card-display">
                     <img 
                     src={currentCard.image} 
-                    alt='{currentCard.value} or {currentCard.suit}' 
+                    alt='{currentCard.value} of {currentCard.suit}' 
                     class="card-image"
                     >
                 </div>
@@ -161,9 +161,9 @@
                             <div class="history-card">
                                 <img 
                                 src={card.image} 
-                                alt="{card.value} or {card.suit}" 
+                                alt="{card.value} of {card.suit}" 
                                 class="card-image small"
-                                title="{card.value} or {card.suit}"
+                                title="{card.value} of {card.suit}"
                                 >
                             </div>
                         {/each}
