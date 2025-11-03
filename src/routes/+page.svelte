@@ -75,17 +75,6 @@
     isLoading = false;
   }
 
-  // Сброс колоды (новая колода)
-  function resetDeck() {
-    deckId = null;
-    remainingCards = 0;
-    currentCard = null;
-    drawnCards = [];
-    error = null;
-  }
-
-  // Создаем колоду при загрузке приложения
-  createNewDeck();
 </script>
 
 <svelte:head>
@@ -115,17 +104,14 @@
                 {/if}
             </div>
             <div class="buttons">
-                <button on:click={createNewDeck} disabled={isLoading}>
-                {isLoading ? 'Загрузка...' : 'Создать колоду'}
-                </button>
                 <button on:click={drawCard} disabled={isLoading || !deckId || remainingCards === 0}>
                 {isLoading ? 'Загрузка...' : 'Вытянуть карту'}
                 </button>
                 <button on:click={shuffleDeck} disabled={isLoading || !deckId}>
                 {isLoading ? 'Загрузка...' : 'Перетасовать'}
                 </button>
-                <button on:click={resetDeck} class = 'secondary'>
-                Сброс
+                <button on:click={createNewDeck} disabled={isLoading}>
+                {isLoading ? 'Загрузка...' : (deckId ? 'Пересоздать колоду' : 'Создать колоду')}
                 </button>
             </div>
         </div>
@@ -266,14 +252,6 @@
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
-  }
-
-  button.secondary {
-    background: #e74c3c;
-  }
-
-  button.secondary:hover:not(:disabled) {
-    background: #c0392b;
   }
 
   .error {
