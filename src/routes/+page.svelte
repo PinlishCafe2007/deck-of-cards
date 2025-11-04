@@ -82,7 +82,7 @@
 </svelte:head>
 
 <main>
-    <h1>🃏Колода карт</h1>
+    <h1>🃏Deck Of Cards</h1>
     <div class="container">
         <!-- Статус и управление -->
         <div class="controls">
@@ -96,6 +96,9 @@
                       >
                         {deckId.slice(0, 8)}...</strong></p>
                     <p>Осталось карт: <strong>{remainingCards}</strong></p>
+                {:else}
+                    <p>Колода: ...</p>
+                    <p>Осталось карт: ...</p>
                 {/if}
                 {#if showDeckIdTooltip}
                   <div class="tooltip">
@@ -157,7 +160,11 @@
                 </div>
             {:else if deckId && !isLoading}
             <div class="empty-state">
-                <p>🎲Нажмите "Вытянуть карту", чтобы начать!</p>
+                <p>🎲Нажмите "Вытянуть карту", чтобы взять одну из них!</p>
+            </div>
+            {:else if !isLoading}
+            <div class="empty-state">
+                <p>🎴Чтобы Нажмите "Создать колоду", чтобы подготовить карты!</p>
             </div>
             {/if}
         <!-- Состояние загрузки -->
@@ -187,6 +194,7 @@
 
   .container {
     max-width: 1200px;
+    min-height: 300px;
     margin: 0 auto;
     background: white;
     border-radius: 15px;
@@ -198,7 +206,7 @@
     text-align: center;
     color: #2c3e50;
     margin-bottom: 30px;
-    font-size: 2.5em;
+    font-size: 3em;
   }
 
   .controls {
@@ -211,6 +219,7 @@
     padding: 20px;
     background: #f8f9fa;
     border-radius: 10px;
+    min-height: 60px;
   }
 
   .status {
@@ -336,7 +345,7 @@
 
   .loading {
     text-align: center;
-    padding: 40px;
+    padding: 20px;
   }
 
   .spinner {
@@ -395,6 +404,6 @@
     padding: 5px 10px;
     border-radius: 3px;
     margin-left: 10px;
-    top: 18%;
+    top: 20%;
   }
 </style>
