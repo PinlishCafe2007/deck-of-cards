@@ -108,13 +108,13 @@
             </div>
             <div class="buttons">
                 <button on:click={drawCard} disabled={isLoading || !deckId || remainingCards === 0}>
-                {isLoading ? 'Загрузка...' : 'Вытянуть карту'}
+                {isLoading ? 'Загрузка...' : 'Вытянуть'}
                 </button>
                 <button on:click={shuffleDeck} disabled={isLoading || !deckId}>
                 {isLoading ? 'Загрузка...' : 'Перетасовать'}
                 </button>
                 <button on:click={createNewDeck} disabled={isLoading}>
-                {isLoading ? 'Загрузка...' : (deckId ? 'Пересоздать колоду' : 'Создать колоду')}
+                {isLoading ? 'Загрузка...' : (deckId ? 'Пересоздать' : 'Создать колоду')}
                 </button>
             </div>
         </div>
@@ -160,7 +160,7 @@
                 </div>
             {:else if deckId && !isLoading}
             <div class="empty-state">
-                <p>🎲Нажмите "Вытянуть карту", чтобы взять одну из них!</p>
+                <p>🎲Нажмите "Вытянуть", чтобы взять одну из карт!</p>
             </div>
             {:else if !isLoading}
             <div class="empty-state">
@@ -206,7 +206,7 @@
     text-align: center;
     color: #2c3e50;
     margin-bottom: 30px;
-    font-size: 3em;
+    font-size: 2em;
   }
 
   .controls {
@@ -219,12 +219,11 @@
     padding: 20px;
     background: #f8f9fa;
     border-radius: 10px;
-    min-height: 60px;
+    max-height: 15vh;
   }
 
   .status {
     flex: 1;
-    min-width: 200px;
   }
 
   .status p {
@@ -345,7 +344,7 @@
 
   .loading {
     text-align: center;
-    padding: 20px;
+    padding: 19px;
   }
 
   .spinner {
@@ -363,7 +362,7 @@
     100% { transform: rotate(360deg); }
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     .container {
       padding: 15px;
       margin: 10px;
@@ -386,8 +385,63 @@
       text-align: center;
     }
 
-    h1 {
-      font-size: 2em;
+    button {
+      font-size: 0.8em;
+    }
+
+    .status {
+      font-size: 0.9em;
+    }
+
+    .card-image {
+      width: 150px;
+      height: 210px;
+    }
+
+    .card-image.small {
+      width: 50px;
+      height: 70px;
+    }
+    p {
+      font-size: 0.8em;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .loading {
+      margin-bottom: -5px;
+    }
+
+    button {
+      font-size: 0.6em;
+      padding: 10px;
+    }
+
+    .status {
+      font-size: 0.8em;
+    }
+
+    p {
+      font-size: 0.5em;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .loading {
+      margin-bottom: 8px;
+    }
+
+    button {
+      font-size: 0.5em;
+      padding: 10px;
+    }
+
+    .status {
+      font-size: 0.6em;
+    }
+
+    p {
+      font-size: 0.4em;
     }
   }
   
