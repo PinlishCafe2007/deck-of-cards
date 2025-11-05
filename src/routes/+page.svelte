@@ -404,6 +404,9 @@
     p {
       font-size: 0.8em;
     }
+    .loading {
+      margin-bottom: -4.5px;
+    }
   }
 
   @media (max-width: 560px) {
@@ -426,6 +429,15 @@
   }
 
   @media (max-width: 400px) {
+    .card-image {
+      width: 120px;
+      height: 160px;
+    }
+
+    .card-image.small {
+      width: 35px;
+      height: 45px;
+    }
     .loading {
       margin-bottom: 8px;
     }
@@ -457,6 +469,6 @@
     padding: 5px 10px;
     border-radius: 3px;
     margin-left: 10px;
-    top: 20%;
+    top: 16%;
   }
 </style>
