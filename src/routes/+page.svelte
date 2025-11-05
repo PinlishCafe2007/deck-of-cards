@@ -1,5 +1,8 @@
 <script>
   import { createDecks, drawCards, shuffleDecks } from '$lib/deckAPI'
+  import tippy from 'tippy.js';
+  import 'tippy.js/dist/tippy.css';
+  import { onMount } from 'svelte';
 
   let deckId = null;
   let remainingCards = 0;
@@ -74,6 +77,28 @@
     isLoading = false;
   }
 
+  onMount(() => {
+    // Тултипы для кнопок
+    tippy('#create-btn', {
+      content: 'Создать новую колоду карт'
+    });
+    
+    tippy('#draw-btn', {
+      content: 'Вытянуть одну карту из колоды'
+    });
+    
+    tippy('#shuffle-btn', {
+      content: 'Перетасовать оставшиеся карты'
+    });
+    
+    tippy('#history-btn', {
+      content: 'Очистить историю вытянутых карт'
+    });
+    
+    tippy('#reset-btn', {
+      content: 'Полностью сбросить колоду и историю'
+    });
+  });
 </script>
 
 <svelte:head>
@@ -106,13 +131,13 @@
                 {/if}
             </div>
             <div class="buttons">
-                <button on:click={drawCard} disabled={isLoading || !deckId || remainingCards === 0}>
+                <button id="create-btn" on:click={drawCard} disabled={isLoading || !deckId || remainingCards === 0}>
                 {isLoading ? 'Загрузка...' : 'Вытянуть'}
                 </button>
-                <button on:click={shuffleDeck} disabled={isLoading || !deckId}>
+                <button id="draw-btn" on:click={shuffleDeck} disabled={isLoading || !deckId}>
                 {isLoading ? 'Загрузка...' : 'Перетасовать'}
                 </button>
-                <button on:click={createNewDeck} disabled={isLoading}>
+                <button id="shuffle-btn" on:click={createNewDeck} disabled={isLoading}>
                 {isLoading ? 'Загрузка...' : (deckId ? 'Пересоздать' : 'Создать колоду')}
                 </button>
             </div>
@@ -462,13 +487,47 @@
   color: #3498db;
   }
 
-  .tooltip {
+  /* .tooltip {
     position: absolute;
-    background: black;
+    background: rgb(57, 57, 57);
     color: white;
     padding: 5px 10px;
     border-radius: 3px;
     margin-left: 10px;
-    top: 16%;
+    top: 14%;
+  } */
+  .tooltip {
+  position: absolute;
+  margin-top: -90px;
+  margin-left: 50px;
+  background: rgb(63, 63, 63);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: tippy-fade 0.2s ease-out;
+}
+
+.tooltip::before {
+  content: '';
+  position: absolute;
+  top: 29px;
+  left: 60px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #333;
+}
+
+@keyframes tippy-fade {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 1;
+  }
+}
 </style>
