@@ -1,4 +1,6 @@
 <script>
+  import { createDecks, drawCards, shuffleDecks } from '$lib/deckAPI'
+
   let deckId = null;
   let remainingCards = 0;
   let currentCard = null;
@@ -12,8 +14,7 @@
     isLoading = true;
     error = null;
     try {
-      const response = await fetch('https://deckofcardsapi.com/api/deck/new/');
-      const data = await response.json();
+      const data = await createDecks();
       
       if (data.success) {
         deckId = data.deck_id;
@@ -36,8 +37,7 @@
     isLoading = true;
     error = null;
     try {
-      const response = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
-      const data = await response.json();
+      const data = await drawCards(deckId, 1);
       
       if (data.success && data.cards.length > 0) {
         currentCard = data.cards[0];
@@ -59,8 +59,7 @@
     isLoading = true;
     error = null;
     try {
-      const response = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/shuffle/`);
-      const data = await response.json();
+      const data = await shuffleDecks(deckId);
       
       if (data.success) {
         remainingCards = data.remaining;
