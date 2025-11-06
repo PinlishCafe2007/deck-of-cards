@@ -290,7 +290,7 @@
     box-shadow: var(--container-shadow);
     margin: 0 auto;
     box-sizing: border-box;
-    min-height: 400px;
+    min-height: 500px;
   }
 
   h1 {

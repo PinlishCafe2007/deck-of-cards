@@ -3,7 +3,7 @@ import type { DeckResponse, Card } from './types/deck';
 const API_BASE = 'https://deckofcardsapi.com/api/deck';
 
 export async function createDecks(): Promise<DeckResponse> {
-  const response = await fetch(`${API_BASE}/new/shuffle/?deck_count=1`);
+  const response = await fetch(`${API_BASE}/new/?deck_count=1`);
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
